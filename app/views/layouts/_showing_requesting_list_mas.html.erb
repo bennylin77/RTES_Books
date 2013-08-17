@@ -1,0 +1,100 @@
+<%if !showing_requesting_list_mas.requesting_days.blank?%>
+<script type="text/javascript" charset="utf-8">
+$(function() {
+  var d, h, m, s;
+  $('div#clock_<%=showing_requesting_list_mas.id%>').countdown(new Date(
+  									<%=dayAdd(showing_requesting_list_mas.created_at,showing_requesting_list_mas.requesting_days).utc.to_i*1000%>), function(event) {
+    var timeFormat = "%d<span style=\"font-size: 8px; font-weight:normal;\">天</span>%h<span style=\"font-size: 8px; font-weight:normal;\">時</span>%m<span style=\"font-size: 8px; font-weight:normal;\">分</span>%s<span style=\"font-size: 8px; font-weight:normal;\">秒</span>"
+        $this = $(this);
+    switch(event.type) {
+      case "days":
+        d = event.value;
+        break;
+      case "hours":
+        h = event.value;
+        break;
+      case "minutes":
+        m = event.value;
+        break;
+      case "seconds":
+        s = event.value;
+        break;
+      case "finished":
+        $this.fadeTo('slow', 0.5);
+        break;
+    }
+    // Assemble time format
+    if(d > 0) {
+      timeFormat = timeFormat.replace(/\%d/, d);
+    } else {
+      timeFormat = timeFormat.replace(/\%d<span style=\"font-size: 8px; font-weight:normal;\">天<\/span>/, '');
+    }
+    timeFormat = timeFormat.replace(/\%h/, h);
+    timeFormat = timeFormat.replace(/\%m/, m);
+    timeFormat = timeFormat.replace(/\%s/, s);
+    // Display
+    $this.html(timeFormat);
+  });
+});
+</script>
+<%end%>
+<div class="box ccol" style="background-color: #FFFFEB;">
+	
+<section class="table" id="showing_requesting_list_area_table">
+<a href="<%=url_for :controller => "main", :action => "showRequestingBook", :id => showing_requesting_list_mas%>">	
+<div class="tr">
+		<div class="td">
+			<div class="tr" style="font-weight: 700 ; font-size: 15px; height: 25px; text-align: center; padding-top: 5px;">			
+				<%if !showing_requesting_list_mas.available%>	
+				<span id="showing_unavail" style="float: none;">	
+				已徵到
+				</span>				
+				<%elsif !showing_requesting_list_mas.course.blank?%>	
+				<span style="">
+				<%=truncate(showing_requesting_list_mas.course, :length => 13, :omission => '...') %>
+				</span>
+				<%else%>
+				<span style="">
+				--	
+				</span>
+				<%end%>	
+						
+			</div>
+   			<div class="tr" id="clock_<%=showing_requesting_list_mas.id%>" style="font-weight: 600; font-size: 14px; text-align: center;"></div>							
+			<div class="tr">
+				<div class="td" style="vertical-align:middle;">
+					<%if !showing_requesting_list_mas.book_list.image_name.blank? %>	
+					<%=image_tag showing_requesting_list_mas.book_list.image_name, :alt => showing_requesting_list_mas.book_list.name %>
+					<%else%>
+					<%=image_tag "NoImg.png", :alt => "無封面" %><br />
+					<%end%>
+				</div>	
+			</div>
+			<div class="tr"  style="text-align: center; font-size: 12px; color: red" >
+			$<%= showing_requesting_list_mas.prefer_price_from %>~$<%= showing_requesting_list_mas.prefer_price_to %>
+			</div>
+		</div>		
+</div>	
+<div class="tr">
+		<div class="td" style=" font-size: 12px; text-align: center; margin: auto 0;">
+			<%=showing_requesting_list_mas.book_list.name%>		
+		</div>
+</div>			
+<div class="tr" style="padding-top: 8px">
+	<div class="td" style="vertical-align:middle; width: 25px;">
+		<a href=<%="http://www.facebook.com/"+findFacebookIDByUserID(showing_requesting_list_mas.user_id )%>><%= image_tag "https://graph.facebook.com/"+findFacebookIDByUserID(showing_requesting_list_mas.user_id )+"/picture", :size => "25x25" %></a>
+	</div>	
+	<div class="td" style="padding-left: 5px;">	
+		<div style="font-size: 11px; font-weight: 700; ">
+			<%= truncate(showingListArea("requesting", showing_requesting_list_mas)).html_safe %>			
+		</div>	
+		<div style="font-size: 10px;">
+			<%= time_ago_in_words(showing_requesting_list_mas.created_at) %>之前		
+		</div>			
+	</div>		
+</div>				
+	
+</a>
+</section> 	
+				
+</div>

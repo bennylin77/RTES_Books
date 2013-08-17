@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+	<div style="display: inline-block;">
+	  	<h2><%= @list.book_list.name %></h2>
+		</br>
+		<div style="display: inline-block;">		
+			<%if !@list.book_list.image_name.blank? %>	
+			<%=image_tag @list.book_list.image_name, :size => "100x110", :alt =>  @list.book_list.name %>
+			<%else%>
+			<%=image_tag "http://rtes.funeasy.tw/assets/NoImg.png", :size => "100x110", :alt => "無封面" %>
+			<%end%>				
+		</div>
+		<div style="display: inline-block;">
+			<%if @type=="requesting"%>	
+				<p>
+			 	價錢:$<%= @list.price %>
+			 	</p>
+			 	<p>
+			    交易地點:
+			    <%=showingListAreaAndLocation('selling', @list)%>
+			    </p> 
+			    <a href="<%=dns_name%>/<%=url_for :controller => "main", :action => "showSellingBook", :id => @list%>">詳細資訊..</a>
+			<%elsif @type=="selling"%>
+				<p>
+			 	希望價錢:$<%= @list.prefer_price_from %>~$<%= @list.prefer_price_to %>
+			 	</p>
+			 	<p>
+			    交易地點:
+			    <%=showingListAreaAndLocation('requesting', @list)%>			    
+			    </p> 
+			    <a href="<%=dns_name%>/<%=url_for :controller => "main", :action => "showRequestingBook", :id => @list%>">詳細資訊..</a>
+			<%end%>
+		</div>
+	</div>  	
+  	<div style="display: inline-block;  margin-top: 0px;">
+  		<a href=<%="http://www.facebook.com/"+findFacebookIDByUserID( @list.user_id )%>><%= image_tag "https://graph.facebook.com/"+findFacebookIDByUserID( @list.user_id )+"/picture", :size => "40x40" %></a>
+  		</br>
+  		<a href=<%="http://www.facebook.com/"+findFacebookIDByUserID( @list.user_id )%>><%=@list.user.FB_username%></a>
+  	</div>
+  	<h1 style="font-size: 11px;">如果您不希望再接收通知信件,請刪除您在RTES books的此筆項目,或是進入"<%=link_to "使用者設定", dns_name %>"將此功能取消</h1>
+  </body>
+</html>

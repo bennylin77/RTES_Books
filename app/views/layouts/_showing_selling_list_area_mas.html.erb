@@ -1,0 +1,58 @@
+<div class="box ccol" style="background-color: #FAFAFA;">
+	
+<section class="table" id="showing_selling_list_area_table">
+<a href="<%=url_for :controller => "main", :action => "showSellingBook", :id => showing_selling_list_area_mas%>">	
+<div class="tr">
+		<div class="td">
+			<div class="tr" style="font-weight: 700 ; font-size: 15px; height: 25px; text-align: center; padding-top: 5px;">			
+				<%if !showing_selling_list_area_mas.available%>	
+				<span id="showing_unavail" style="float: none;">	
+				已賣出
+				</span>				
+				<%elsif !showing_selling_list_area_mas.course.blank?%>	
+				<span style="">
+				<%=truncate(showing_selling_list_area_mas.course, :length => 13, :omission => '...') %>
+				</span>
+				<%else%>
+				<span style="">
+				--	
+				</span>
+				<%end%>				
+			</div>			
+			<div class="tr">
+				<div class="td" style="vertical-align:middle;">				
+					<%if !showing_selling_list_area_mas.book_list.image_name.blank? %>	
+					<%=image_tag showing_selling_list_area_mas.book_list.image_name, :alt => showing_selling_list_area_mas.book_list.name %>
+					<%else%>
+					<%=image_tag "NoImg.png", :alt => "無封面" %><br />
+					<%end%>
+				</div>	
+			</div>
+			<div class="tr"  style="text-align: center; font-size: 12px; color: red" >
+			$<%= showing_selling_list_area_mas.price %>
+			</div>
+		</div>		
+</div>	
+<div class="tr">
+		<div class="td" style=" font-size: 12px; text-align: center; margin: auto 0;">
+			<%=showing_selling_list_area_mas.book_list.name%>		
+		</div>
+</div>			
+<div class="tr" style="padding-top: 8px">
+	<div class="td" style="vertical-align:middle; width: 25px;">
+		<a href=<%="http://www.facebook.com/"+findFacebookIDByUserID(showing_selling_list_area_mas.user_id )%>><%= image_tag "https://graph.facebook.com/"+findFacebookIDByUserID(showing_selling_list_area_mas.user_id )+"/picture", :size => "25x25" %></a>
+	</div>	
+	<div class="td" style="padding-left: 5px;">	
+		<div style="font-size: 11px; font-weight: 700; ">
+			<%= showingListLocation('selling', showing_selling_list_area_mas, @english_name)%>		
+		</div>	
+		<div style="font-size: 10px;">
+			<%= time_ago_in_words(showing_selling_list_area_mas.created_at) %>之前		
+		</div>			
+	</div>		
+</div>				
+	
+</a>
+</section> 	
+				
+</div>

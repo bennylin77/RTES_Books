@@ -1,0 +1,252 @@
+<style>
+    .table 
+    {   	
+        border-collapse: collapse;
+        border-spacing: 0;
+        display: table;
+        font-size: 12px;
+       
+ 		      
+    }
+    .table  a:hover
+    {   	
+
+		text-decoration: none;		      
+    }
+    .tr
+    {   	
+        display: table-row, inline-block; 
+    } 
+    .td 
+    {
+
+    	color: black;
+        display: table-cell;        
+    }
+    .td:hover 
+    {
+
+    	color:#57B6DD;
+        display: table-cell;        
+    }
+</style>
+
+<h1 style="text-align:center; font-size: 25px; vertical-align:bottom;">
+<%if !@chinese_name.blank?%>
+<%=link_to @chinese_name, "/main/schoolOutline?english_name="+@english_name%>
+<%else%>
+<%=link_to @english_name, "/main/schoolOutline?english_name="+@english_name%>
+<%end%>
+</h1></br>
+	
+	
+<%if @area_selling_lists%>
+	<script type="text/javascript">
+	$(function() 
+	{
+		$( "#search_selling_name" ).autocomplete
+		({
+			source: "auto_complete_for_SearchBookList",
+			delayType: 300,
+			minLength: 2,
+			//select:    function(event, data)
+			//    { 
+					//document.location=('/main/requestingPage1?search[term]='+data.item.value);			
+			//	}						
+		}).data("autocomplete")._renderItem = function (ul, item) {
+			return $( "<li></li>" )
+			.data( "item.autocomplete", item )
+			.append("<a><img src='" + item.link + "' alt='無圖' height='60' width='50'/>" + item.label + "</a>")
+			.appendTo( ul );
+		}; 	
+		var $container = $('#masonry-container');		
+		$container.imagesLoaded(function(){
+		    $container.masonry({
+		      itemSelector: '.box',
+		      columnWidth: 35
+		    });
+		  });		
+	});
+	</script>
+<div style="float: left; display: inline-block">
+	<%= form_tag  "areaListShowing", :method =>:get do %>
+		<div class="ui-widget" style="display: inline-block">		
+		<%= text_field  :search, :selling_name, :size=>40 %>
+		</div>
+		<%= hidden_field  :search, :type, :value=>"selling" %>
+		<%= hidden_field  :search, :english_name, :value=>@english_name %>
+		<div style="display: inline-block">	
+		<%= submit_tag "搜尋賣書" %>
+		</div>
+	<% end %>	
+</div>	
+<div style="float: right; display: inline-block ;margin-right: 45px;">
+<span id="type_button"><%=link_to "全部", "/main/schoolOutline?english_name="+@english_name %></span>
+<span id="type_button_current"><%=link_to "賣書", "/main/areaListShowing?type=selling&english_name="+@english_name %></span>
+<span id="type_button"><%=link_to "徵書", "/main/areaListShowing?type=requesting&english_name="+@english_name %></span>
+</div>	
+	<div id="masonry-container" class="transitions-enabled clearfix">	
+		<%= render(:partial => "layouts/showing_selling_list_area_mas", :collection => @area_selling_lists)|| '抱歉, 沒有任何結果' %></br>
+		<%if  !@area_selling_lists.kind_of?(Array)%>
+		<!--<div class="apple_pagination">-->
+			<%= will_paginate(@area_selling_lists) %>
+		<!--</div>-->	
+		<%end%>
+	<%if !@search_c%>
+		<%= javascript_tag do %>
+		
+		reloadMasonry = function(){		
+	          var $container = $('#masonry-container');	
+			  $container.imagesLoaded(function(){
+			    $container.masonry('reload');
+			  });						
+		};
+		endPage = function(){ 
+			$('#scrolling_more').text('已讀取全部');			
+		};		
+		
+		$('#masonry-container').pageless({
+			totalPages: <%= @area_selling_lists.total_pages %>,
+			url: '<%= "/main/areaListShowing?type=selling&english_name="+@english_name %>',
+			loaderImage: '<%=  image_path("loading.gif") %>',
+			complete: reloadMasonry,
+			end: endPage
+		  });
+		<% end %>
+	<%else%>
+		<%= javascript_tag do %>
+		
+		reloadMasonry = function(){		
+	          var $container = $('#masonry-container');	
+			  $container.imagesLoaded(function(){
+			    $container.masonry('reload');
+			  });						
+		};	
+		endPage = function(){ 
+			$('#scrolling_more').text('已讀取全部');			
+		};	
+		
+		$('#masonry-container').pageless({
+			totalPages: <%= @area_selling_lists.total_pages %>,
+			url: '<%= "/main/areaListShowing?search[type]=selling&search[english_name]="+@english_name+"&search[type]=selling&search[selling_name]="+@term %>',
+			loaderImage: '<%=  image_path("loading.gif") %>',
+			complete: reloadMasonry,
+			end: endPage
+		  });
+		<% end %>
+	<%end%>
+	</div>	
+<div id="scrolling_more" style="font-size: 18px; font-weight: 800; text-align:center;">
+<%if @area_selling_lists.total_pages==1%>
+已讀取全部
+<%else%>
+下拉讀取更多..
+<%end%>
+</div>
+<%elsif @area_requesting_lists%>
+	<script type="text/javascript">
+	$(function() 
+	{
+		$( "#search_requesting_name" ).autocomplete
+		({
+			source: "auto_complete_for_SearchBookList",
+			delayType: 150,
+			minLength: 2,
+			//select:    function(event, data)
+			//    { 
+					//document.location=('/main/requestingPage1?search[term]='+data.item.value);			
+			//	}						
+		}).data("autocomplete")._renderItem = function (ul, item) {
+			return $( "<li></li>" )
+			.data( "item.autocomplete", item )
+			.append("<a><img src='" + item.link + "' alt='無圖' height='60' width='50'/>" + item.label + "</a>")
+			.appendTo( ul );
+		}; 
+		var $container = $('#masonry-container');		
+		$container.imagesLoaded(function(){
+		    $container.masonry({
+		      itemSelector: '.box',
+		      columnWidth: 35
+		    });
+		  });		
+		
+		
+	});
+	</script>
+<div style="float: left; display: inline-block">
+	<%= form_tag  "areaListShowing", :method =>:get do %>
+		<div class="ui-widget" style="display: inline-block">		
+		<%= text_field  :search, :requesting_name, :size=>35 %>
+		</div>
+		<%= hidden_field  :search, :type, :value=>"requesting" %>
+		<%= hidden_field  :search, :english_name, :value=>@english_name %>
+		<div style="display: inline-block">	
+		<%= submit_tag "搜尋徵書" %>
+		</div>
+	<% end %>		
+</div>
+<div style="float: right; display: inline-block ;margin-right: 45px;">
+<span id="type_button"><%=link_to "全部", "/main/schoolOutline?english_name="+@english_name %></span>
+<span id="type_button"><%=link_to "賣書", "/main/areaListShowing?type=selling&english_name="+@english_name %></span>
+<span id="type_button_current"><%=link_to "徵書", "/main/areaListShowing?type=requesting&english_name="+@english_name %></span>
+</div>	
+	
+	<div id="masonry-container" class="transitions-enabled clearfix">	
+		<%= render(:partial => "layouts/showing_requesting_list_area_mas", :collection => @area_requesting_lists)|| '抱歉, 沒有任何結果' %></br>
+		<%if  !@area_requesting_lists.kind_of?(Array)%>
+		<!--<div class="apple_pagination">-->
+			<%= will_paginate(@area_requesting_lists) %>
+		<!--</div>-->	
+		<%end%>
+	<%if !@search_c%>
+		<%= javascript_tag do %>
+		
+		reloadMasonry = function(){		
+	          var $container = $('#masonry-container');	
+			  $container.imagesLoaded(function(){
+			    $container.masonry('reload');
+			  });						
+		};
+		endPage = function(){ 
+			$('#scrolling_more').text('已讀取全部');			
+		};		
+		
+		$('#masonry-container').pageless({
+			totalPages: <%= @area_requesting_lists.total_pages %>,
+			url: '<%= "/main/areaListShowing?type=requesting&english_name="+@english_name %>',
+			loaderImage: '<%=  image_path("loading.gif") %>',
+			complete: reloadMasonry,
+			end: endPage
+		  });
+		<% end %>
+	<%else%>
+		<%= javascript_tag do %>
+		
+		reloadMasonry = function(){		
+	          var $container = $('#masonry-container');	
+			  $container.imagesLoaded(function(){
+			    $container.masonry('reload');
+			  });						
+		};	
+		endPage = function(){ 
+			$('#scrolling_more').text('已讀取全部');			
+		};	
+		
+		$('#masonry-container').pageless({
+			totalPages: <%= @area_requesting_lists.total_pages %>,
+			url: '<%= "/main/areaListShowing?search[type]=requesting&search[english_name]="+@english_name+"&search[type]=requesting&search[requesting_name]="+@term %>',
+			loaderImage: '<%=  image_path("loading.gif") %>',
+			complete: reloadMasonry,
+			end: endPage
+		  });
+		<% end %>
+	<%end%>
+	</div>	
+<div id="scrolling_more" style="font-size: 18px; font-weight: 800; text-align:center;">
+<%if @area_requesting_lists.total_pages==1%>
+已讀取全部
+<%else%>
+下拉讀取更多..
+<%end%>
+</div>		
+<%end%>

@@ -1,0 +1,98 @@
+<%if !showing_requesting_list.requesting_days.blank?%>
+<script type="text/javascript" charset="utf-8">
+$(function() {
+  var d, h, m, s;
+  $('div#clock_<%=showing_requesting_list.id%>').countdown(new Date(
+  									<%=dayAdd(showing_requesting_list.created_at, showing_requesting_list.requesting_days).utc.to_i*1000%>), function(event) {
+    var timeFormat = "%d<span style=\"font-size: 8px; font-weight:normal;\">天</span>%h<span style=\"font-size: 8px; font-weight:normal;\">時</span>%m<span style=\"font-size: 8px; font-weight:normal;\">分</span>%s<span style=\"font-size: 8px; font-weight:normal;\">秒</span>"
+        $this = $(this);
+    switch(event.type) {
+      case "days":
+        d = event.value;
+        break;
+      case "hours":
+        h = event.value;
+        break;
+      case "minutes":
+        m = event.value;
+        break;
+      case "seconds":
+        s = event.value;
+        break;
+      case "finished":
+        $this.fadeTo('slow', 0.5);
+        break;
+    }
+    // Assemble time format
+    if(d > 0) {
+      timeFormat = timeFormat.replace(/\%d/, d);
+    } else {
+      timeFormat = timeFormat.replace(/\%d<span style=\"font-size: 8px; font-weight:normal;\">天<\/span>/, '');
+    }
+    timeFormat = timeFormat.replace(/\%h/, h);
+    timeFormat = timeFormat.replace(/\%m/, m);
+    timeFormat = timeFormat.replace(/\%s/, s);
+    // Display
+    $this.html(timeFormat);
+  });
+});
+</script>
+<%end%>
+<section class="table" id="showing_requesting_list_table">
+	<a class="tr" href="<%=url_for :controller => "main", :action => "showRequestingBook", :id => showing_requesting_list%>">		
+		<div class="td" style=" width:83px;">
+			<div class="tr">
+			</br>
+			<%if !showing_requesting_list.book_list.image_name.blank? %>	
+			<%=image_tag showing_requesting_list.book_list.image_name, :size => "65x75", :alt => showing_requesting_list.book_list.name %>
+			<%else%>
+			<%=image_tag "NoImg.png", :size => "65x75", :alt => "無封面" %><br />
+			<%end%>	
+			</div>
+			<div class="tr"  style="text-align: left; font-size: 12px;" >
+			$<%= showing_requesting_list.prefer_price_from %>~$<%= showing_requesting_list.prefer_price_to %>
+			</div>
+		</div>
+		<div class="td" style="padding-left: 15px; width:247px;">
+			<div class="tr" style="font-weight: 700 ; font-size: 15px; color: #FF3333;">
+				</br>
+				<%if !showing_requesting_list.course.blank?%>	
+				<%=truncate(showing_requesting_list.course, :length => 13, :omission => '...') %>
+				<%else%>
+				--	
+				<%end%>
+				<%if !showing_requesting_list.available%>
+				<span id="showing_unavail">	
+				已徵到
+				</span>	
+				<%end%>
+			</div>
+			<div class="tr">	
+   				<div id="clock_<%=showing_requesting_list.id%>" style="font-weight: 900; font-size: 14px; display: inline-block;"></div>
+		    </div>
+			<div class="tr" style="font-size: 12px; ">
+				<%=truncate(showing_requesting_list.book_list.name, :length => 58, :omission => '...') %>
+			</div>			
+			<div class="tr">			
+				<div  style="font-size: 8px; ">
+				詳細資訊..
+				</div>
+			</div>			
+		</div>
+		<div class="td" style="width:90px; text-align: center;  border-bottom: none;">
+			<div class="tr">
+				</br>					
+				<a href=<%="http://www.facebook.com/"+findFacebookIDByUserID(showing_requesting_list.user_id )%>><%= image_tag "https://graph.facebook.com/"+findFacebookIDByUserID(showing_requesting_list.user_id )+"/picture", :size => "20x20" %></a>
+			</div>
+			<!--<div class="tr">
+			<%# current_user.profile.mutual_friends("bennylin77").count%>個共同好友	
+			</div>-->
+			<div class="tr" style="font-size: 11px; font-weight: 600; height: 55px;">	
+			<%= truncate(showingListArea("requesting", showing_requesting_list), :length => 26, :omission => '...').html_safe %>
+			</div>
+			<div class="tr" style="font-size: 10px; ">
+			<%= time_ago_in_words(showing_requesting_list.created_at)%>之前
+			</div>		
+		</div>
+	</a>
+</section> 

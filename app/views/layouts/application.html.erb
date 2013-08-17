@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:fb="http://www.facebook.com/2008/fbml">
+  <head>
+    <title>RTES Books</title>
+    <meta property="fb:app_id" content="<%= Facebook.config[:client_id] %>">
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    <%= favicon_link_tag 'RTES_icon.png' %>
+    <!--[if IE]>
+    <script type="text/javascript" src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <%= stylesheet_link_tag  'application'%> 
+  	<%= javascript_include_tag 'application' %> <!--including application means including all> -->
+	<script src='http://www.google.com/jsapi'></script><!--google chart-->
+	<script src="http://connect.facebook.net/zh_TW/all.js"></script>
+    <%= csrf_meta_tag %>
+    <%= yield :head %>  <!--can use for including for every single page-->
+  </head>
+  <body>	
+    <%= render 'layouts/header' %>
+  	<div class="top_right">
+    	<div class="fb-like-box" data-href="http://www.facebook.com/pages/RTES-Books/417311828326149" data-width="300" 
+  		data-height="500" data-show-faces="false" data-stream="true" data-header="false" style="display: inline-block;"></div>	 		
+    </div> 	    
+    <div class="container">
+    	<div class="top_menu_bar">    
+     		<%= render 'layouts/top_menu_bar' %>   
+       	</div>	   	 	
+    	<div class="left_menu_bar">
+     		<%= render 'layouts/left_menu_bar' %>
+      	</div>	 	
+      	<div class="main">
+        	<%= yield %>
+      	</div>  
+		<%if !@showing_requesting_lists.nil?%>
+  			<div id="sidebar">
+   				<%= render :partial => "layouts/right_requesting_list_showing" , :locals => { :showing_requesting_lists => @showing_requesting_lists } %>
+    			<div class="arrow"></div>
+    			</div>
+    	<%elsif !@showing_selling_lists.nil?%>
+    		<div id="sidebar">
+    			<%= render :partial => "layouts/right_selling_list_showing" , :locals => { :showing_selling_lists => @showing_selling_lists } %>
+    			<div class="arrow"></div>
+    		</div>    	    	 
+    	<%end%>
+    </div>   
+	<%= render 'layouts/footer' %>	
+    <script>
+      FB.init({
+        appId: "<%= Facebook.config[:client_id] %>",
+        cookie: true,
+        xfbml: true,
+        oauth: true
+      });
+    </script>
+    <div id="fb-root"></div>
+	<script>
+	(function(d, s, id) {
+	  var js, fjs = d.getElementsByTagName(s)[0];
+	  if (d.getElementById(id)) return;
+	  js = d.createElement(s); js.id = id;
+	  js.src = "//connect.facebook.net/zh_TW/all.js#xfbml=1&appId=<%= Facebook.config[:client_id] %>";
+	  fjs.parentNode.insertBefore(js, fjs);
+	}(document, 'script', 'facebook-jssdk'));
+	</script>
+			  
+   <!--some script had been removed (need to recover)-->
+  </body>
+</html>

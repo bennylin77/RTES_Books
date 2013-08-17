@@ -1,0 +1,129 @@
+<style>
+    .table 
+    {   	
+        border-collapse: collapse;
+        border-spacing: 0;
+        display: table;
+        font-size: 12px;  	      
+    }
+    .table  a:hover
+    {   	
+		
+		text-decoration: none;		      
+    }
+    .tr
+    {   	
+        display: table-row, inline-block; 
+    } 
+    .td 
+    {
+
+    	color: black;
+        display: table-cell;        
+    }
+    .td:hover 
+    {
+
+    	color:#57B6DD;
+        display: table-cell;        
+    }
+</style>
+
+<script>
+$(function(){ 
+	$( "#search_term" ).autocomplete
+	({
+		source: "auto_complete_for_SearchBookList",
+		delayType: 300,
+		minLength: 2,						
+	}).data("autocomplete")._renderItem = function (ul, item) {
+		return $( "<li></li>" )
+		.data( "item.autocomplete", item )
+		.append("<a><img src='" + item.link + "' alt='無圖' height='60' width='50'/>" + item.label + "</a>")
+		.appendTo( ul );
+	}; 	
+	
+	var $container = $('#masonry-container');		
+	$container.imagesLoaded(function(){
+	    $container.masonry({
+	      itemSelector: '.box',
+	      columnWidth: 35
+	    });
+	  });  
+});
+</script>
+
+<h1 style="text-align:center; font-size: 25px;"><%=link_to "全國", "/main/allOutline"%></h1><br>
+<div style="float: left; display: inline-block">
+<%= form_tag  "allOutline", :method =>:get do %>
+		<div class="ui-widget" style="display: inline-block">		
+		<%= text_field  :search, :term, :size=>40 %>
+		</div>
+		<div style="display: inline-block">	
+		<%= submit_tag "搜尋" %>
+		</div>
+<% end %>
+</div>
+<div style="float: right; display: inline-block ;margin-right: 45px;">
+<span id="type_button_current"><%=link_to "全部", "/main/allOutline"%></span>
+<span id="type_button"><%=link_to "賣書", "/main/allListShowing?type=selling"%></span>
+<span id="type_button"><%=link_to "徵書", "/main/allListShowing?type=requesting"%></span>
+</div>
+<div id="masonry-container" class="transitions-enabled clearfix">	
+		<%= render(:partial => "layouts/showing_list", :collection => @lists)|| '抱歉, 沒有任何結果' %></br>
+		<%if  !@lists.kind_of?(Array)%>
+		<!--<div class="apple_pagination">-->
+			<%= will_paginate(@lists) %>
+		<!--</div>-->	
+		<%end%>
+	<%if !@search_c%>
+		<%= javascript_tag do %>
+		
+		reloadMasonry = function(){		
+	          var $container = $('#masonry-container');	
+			  $container.imagesLoaded(function(){
+			    $container.masonry('reload');
+			  });						
+		};
+		endPage = function(){ 
+			$('#scrolling_more').text('已讀取全部');			
+		};		
+		
+		$('#masonry-container').pageless({
+			totalPages: <%= @lists.total_pages %>,
+			url: '<%= "/main/allOutline" %>',
+			loaderImage: '<%=  image_path("loading.gif") %>',
+			complete: reloadMasonry,
+			end: endPage
+		  });
+		<% end %>
+	<%else%>
+		<%= javascript_tag do %>
+		
+		reloadMasonry = function(){		
+	          var $container = $('#masonry-container');	
+			  $container.imagesLoaded(function(){
+			    $container.masonry('reload');
+			  });						
+		};	
+		endPage = function(){ 
+			$('#scrolling_more').text('已讀取全部');			
+		};	
+		
+		$('#masonry-container').pageless({
+			totalPages: <%= @lists.total_pages %>,
+			url: '<%= "/main/allOutline?search[term]="+@term %>',
+			loaderImage: '<%=  image_path("loading.gif") %>',
+			complete: reloadMasonry,
+			end: endPage
+		  });
+		<% end %>
+	<%end%>
+</div>	
+<div id="scrolling_more" style="font-size: 18px; font-weight: 800; text-align:center;">
+<%if @lists.total_pages==1%>
+已讀取全部
+<%else%>
+下拉讀取更多..
+<%end%>
+</div>

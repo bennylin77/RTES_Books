@@ -1,0 +1,256 @@
+<style>
+    .table 
+    {   	
+        border-collapse: collapse;
+        border-spacing: 0;
+        display: table;
+        /*width: 390px;*/
+        /*font-size: 10px;*/
+    }
+    .table  a:hover
+    {   	
+		background:none;
+		text-decoration: none;		      
+    }
+    .tr
+    {   	
+        display: table-row, inline-block; 
+    } 
+    .td 
+    {
+    	min-width:90px;
+		height:30px;
+        /*border-bottom: dotted #B5DAFF;*/
+    	color: black;
+        display: table-cell;        
+    }
+</style>
+<%= form_for @selling_list , :url=>{:action=>:sellingPage3Save, :controller=>:main } , :multipart => true do |f| %>
+<% if @selling_list.errors.any? %>
+  </br>
+    <div id="error_explanation">
+      <h2><%= @selling_list.errors.count.to_s+"個錯誤" %></h2>
+      <ul>
+      <% @selling_list.errors.each do |key, value| %>
+        <li><%= value %></li>
+      <% end %>
+      </ul>
+    </div>
+<% end %>
+<!--hide field-->
+<div style="display: none">
+	<div class="field"> 
+	    <%= f.text_field :book_list_id%>
+  	</div>
+</div>  
+<!--hide field end-->
+</br>	  
+<section class="table">
+	<div class="tr">
+		<div class="td">
+			<%if !@selling_list.book_list.image_name.blank? %>	
+			<%=image_tag @selling_list.book_list.image_name, :size => "90x100", :alt => @selling_list.book_list.name %><br />
+			<%else%>
+			<%=image_tag "NoImg.png", :size => "90x100", :alt => "無封面" %><br />
+			<%end%>	
+		</div>		
+		<%if !@chart_selling.nil?%>
+		<div class="td">
+			<div id='chart_selling' style='width: 400px; height: 150px ;'></div>
+			<%= render_chart @chart_selling, 'chart_selling' %> 
+		</div>	
+		<%end%>		
+	</div>
+	<div class="tr">
+		<div class="td" style="font-weight: 900; font-size: 18px; width:625px;">
+		<%=@selling_list.book_list.name%>
+		</div>
+	</div>		
+	<div class="tr">
+		<div class="td">	
+		<%= f.label :價錢 %>$:<span style="color: red; display: inline">*</span> 
+		</div>
+		<div class="td">
+		<%= f.text_field :price, :size=>5 %> 
+	 	</div>	 	
+		<%if !@chart_selling.nil?%>
+		<div class="td" style="color: red; font-size: 10px;">
+		平均價錢: 
+		$<%= @average_price %>
+		</div>	
+		<%end%>
+	</div>
+        <div class="tr">
+                <div class="td">
+                    <%= f.label :哪類課程用書?%>
+                </div>
+                <div class="td">
+                    <%= f.text_field :course, :size=>15 %>
+                </div>
+        </div>	
+	<div id="condition_block"; style="border: dotted #B5DAFF; display:<%if @selling_list.price.blank?%>none<%else%>inherit<%end%>;">		
+	<div class="tr">	
+		<div class="td">
+			<%= f.label :可議價? %>
+		</div>
+		<div class="td">
+			<%= f.radio_button(:bargain, "Y") %>
+			<%= f.label  "是" %>
+			<%= f.radio_button(:bargain, "N") %>
+			<%= f.label  "否" %>
+		</div>
+	</div>	
+	<div class="tr">	
+		<div class="td">
+			<%= f.label :有缺頁? %>
+		</div>
+		<div class="td">
+		  	<%= f.radio_button(:missing, "Y") %>
+			<%= f.label  "是" %>
+			<%= f.radio_button(:missing, "N") %>
+			<%= f.label  "否" %>
+		</div>
+	</div>						
+	<div class="tr">	
+		<div class="td">
+			<%= f.label :裁剪過? %>
+		</div>
+		<div class="td">
+		  	<%= f.radio_button(:cutting, "Y") %>
+			<%= f.label  "是" %>
+			<%= f.radio_button(:cutting, "N") %>
+			<%= f.label  "否" %>
+		</div>
+	</div>			
+	<div class="tr">	
+		<div class="td">
+		  	<%= f.label :有髒汙? %>
+		</div>
+		<div class="td">
+		  	<%= f.radio_button(:stains, "none") %>
+			<%= f.label  "無" %>
+			<%= f.radio_button(:stains, "less") %>
+			<%= f.label  "少" %>
+			<%= f.radio_button(:stains, "mid") %>
+			<%= f.label  "中" %>
+			<%= f.radio_button(:stains, "mass") %>
+			<%= f.label  "多" %>
+		</div>
+	</div>			
+	<div class="tr">	
+		<div class="td">
+		  	<%= f.label :有筆記? %>
+		</div>
+		<div class="td">
+		  	<%= f.radio_button(:note, "none") %>
+			<%= f.label  "無" %>
+			<%= f.radio_button(:note, "less") %>
+			<%= f.label  "少" %>
+			<%= f.radio_button(:note, "mid") %>
+			<%= f.label  "中" %>
+			<%= f.radio_button(:note, "mass") %>
+			<%= f.label  "多" %>
+		</div>
+	</div>		
+	<!-- implement later
+	  <div class="field">
+	 	<%= f.label  :書本照片 %>(將會儲存在Facebook相簿裡)<br />
+	   	<%= f.file_field :photo_source ,:accept => 'image' %> 
+	  </div>
+	-->
+	</div>
+	<div class="tr">
+		<div class="td">		
+			<%= f.label :連絡方式%>:
+		</div>
+		<div class="td">		
+			<%= f.check_box(:email_c) %>
+			<%= f.label :email%><div style="font-size: 10px; display: inline">(將會顯示您的e-mail)</div>
+			<%= f.check_box(:FB_c) %>
+			<%= f.label :FB訊息%>
+			<%= f.label :電話%><div style="font-size: 10px; display: inline">(可不填)</div>:
+		    <%= f.text_field :phone, :size =>11 %>
+		</div>
+	</div>	
+   	<div class="tr">
+		<div class="td">
+   		<%= f.label :面交學校%>:
+   		</div>	
+	    <%if !session[:user_id].blank?%>
+	    	<%if User.find_by_id(session[:user_id]).educations.count!=0%> 
+	   		<div class="td">
+ 				<%= select_tag 'area[0]', options_for_select( schoolOptionsId("selling") , User.find(session[:user_id]).user_config.default_trading_school ), {:prompt => "請選擇.."} %> 
+   			<%else%>
+   			<div class="td">
+ 				<%= select_tag 'area[0]', options_for_select( schoolOptionsId("selling") ), {:prompt => "請選擇.."} %>
+   			<%end%>
+   		<%else%>
+   		   	<div class="td">	
+   		 		<%= select_tag 'area[0]', options_for_select( schoolOptionsId("selling") ), {:prompt => "請選擇.."} %>
+   		<%end%>
+   				詳細地點:<%= text_field_tag 'location[0]' ,nil, :size=>10 %>  
+   			</div>		
+	</div>
+	<div id="extraField">
+  	</div>
+ 	<div class="tr">
+ 		<div class="td">
+ 		</div>	
+ 		<div class="td">
+			<input type="button" onclick="addInput()" name="add" value="新增學校" />
+		</div>
+		<div class="td">		
+			<input type="button" onclick="delInput()" name="add" value="刪除學校" />
+		</div>
+	</div>
+	<div class="tr">
+	  <div class="td">	
+	    <%= f.label :補充 %>:
+	    <br>
+	    <%= f.text_area :addition, :rows=>4, :cols=>50  %>
+	  </div>
+	</div>
+    <div class="tr">
+  	  <div class="td">
+    	<%= f.submit "送出" %>
+      </div>
+    </div>
+</section>   
+<% end %>
+
+<script type="text/javascript">
+	extra_ip = 1;
+	function addInput() 
+	{	
+    	$("#extraField").append("<div class='tr' id='area_block_"+
+    							extra_ip.toString()+
+    							"'><div class='td'></div><div class='td'>"+
+								"<select id='area_"+
+								extra_ip.toString()+ 
+								"' name='area["+ 
+								extra_ip.toString()+
+								"]'>"+
+								document.getElementById('area_0').innerHTML+
+								"</select>"+														   
+								" 詳細地點:<input id='location_"+
+								extra_ip.toString()+
+								"' name='location["+
+								extra_ip.toString()+ 
+								"]' size='10' type='text' /></div>"+
+								"</div>");												   
+		extra_ip++;
+	}
+	function delInput()
+	{
+		if(extra_ip!=1)
+		{
+			extra_ip--;
+			$("#area_block_"+extra_ip.toString()).remove();
+		}	
+	}
+
+	$('#selling_list_price').change(function() 
+	{  
+ 		document.getElementById('condition_block').style.display="inherit";		
+	});
+</script>

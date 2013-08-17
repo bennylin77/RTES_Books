@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  english_name: MyString
+  chinese_name: MyString
+  icon_name: MyString
+
+two:
+  english_name: MyString
+  chinese_name: MyString
+  icon_name: MyString

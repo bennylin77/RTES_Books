@@ -1,0 +1,5 @@
+<% if showing_list_area.class.to_s=='SellingList' %>
+	<%= render(:partial => "layouts/showing_selling_list_area_mas",  :object=> showing_list_area )%></br>
+<%else%>
+	<%= render(:partial => "layouts/showing_requesting_list_area_mas",  :object=> showing_list_area )%></br> 
+<%end%>  

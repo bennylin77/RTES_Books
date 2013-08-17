@@ -1,0 +1,8 @@
+<ul>
+	<li><a href="/main/sellingPage1">我要賣書</a></li>
+	<li><a href="/main/requestingPage1">我要徵書</a></li>
+	<%if !session[:user_id].blank?%>
+	<li><a href="/main/myBookLists">我的書單</a></li>
+	<li><a href="/main/friendsBookLists">朋友的書單</a></li> 
+	<%end%>
+</ul>

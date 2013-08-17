@@ -1,0 +1,77 @@
+<h1 style="text-align:center; font-size: 25px;">我的書單</h1></br>
+<div style="color: red; margin-left:600px;">每隔24小時可重新刊登</div>
+<div style="float: left;">
+<h1 style="font-size: 18px;">我的賣書</h1></br>
+<table id="my_table">
+  <tr>
+    <th></th>
+    <th>價錢</th>
+    <th>發佈時間</th>
+    <th></th>
+  </tr>
+<% @my_selling_lists.each do |my_selling| %>
+  <tr>
+	<td>	
+	<%if !my_selling.book_list.image_name.blank? %>	
+	<%=link_to image_tag( my_selling.book_list.image_name, :size => "55x65", :alt => "無封面" ), :controller => "main", :action => "showSellingBook", :id => my_selling %>
+	<%else%>
+	<%=link_to image_tag( "NoImg.png", :size => "55x65", :alt => "無封面" ), :controller => "main", :action => "showSellingBook", :id => my_selling %>
+	<%end%>	
+	<div style="height: 55px; font-size: 10px;"><%= link_to truncate( my_selling.book_list.name, :length => 28), :controller => "main", :action => "showSellingBook", :id => my_selling %></div>
+	</td>
+    <td>$<%= my_selling.price %></td>
+    <td><%= time_ago_in_words(my_selling.created_at)%>之前</td>
+    <td>
+    	<ul>
+    	<li>&#8594;<%= link_to '編輯',"/my_selling/"+my_selling.id.to_s() %></li>
+    	<li>&#8594;<%= link_to '重新刊登',"/my_selling/"+my_selling.id.to_s()+"/repost" %></li>	
+    	<li>&#8594;<%= link_to '刪除',"/my_selling/"+my_selling.id.to_s(), method: :delete, data: { confirm: '確定要刪除 "'+my_selling.book_list.name+'" ?' } %></li>
+    	<%if my_selling.available%>
+    	<li>&#8594;<span id="my_button_outline"><%= link_to '已賣出',"/my_selling/"+my_selling.id.to_s()+"/unavailable" %></span></li>
+     	<%else%>
+     	<li>&#8594;<span id="my_button_outline_unavail"><%= link_to '已賣出'%></span></li>
+     	<%end%>
+     	</ul>   	
+    </td>
+  </tr>
+<% end %>
+</table>
+</div>
+
+<div style="float: left;border-left: solid #B5DAFF; padding-left: 10px;">
+<h1 style="font-size: 18px;">我的徵書</h1></br>
+<table id="my_table">
+  <tr>
+  	<th></th>
+    <th>希望價錢</th>
+    <th>發佈時間</th>
+    <th></th>
+  </tr>
+<% @my_requesting_lists.each do |my_requesting| %>
+  <tr>
+	<td>
+	<%if !my_requesting.book_list.image_name.blank? %>	
+	<%=link_to image_tag( my_requesting.book_list.image_name, :size => "55x65", :alt => "無封面"), :controller => "main", :action => "showRequestingBook", :id => my_requesting %>
+	<%else%>
+	<%=link_to image_tag( "NoImg.png", :size => "55x65", :alt => "無封面"), :controller => "main", :action => "showRequestingBook", :id => my_requesting %>
+	<%end%>	
+	<div style="height: 55px; font-size: 10px;"><%=link_to truncate( my_requesting.book_list.name, :length => 28), :controller => "main", :action => "showRequestingBook", :id => my_requesting %></div>
+	</td>
+    <td>$<%= my_requesting.prefer_price_from %>~$<%= my_requesting.prefer_price_to %></td>
+    <td><%= time_ago_in_words(my_requesting.created_at)%>之前</td>
+    <td>
+    	<ul>
+    	<li>&#8594;<%= link_to '編輯',"/my_requesting/"+my_requesting.id.to_s() %></li>
+    	<li>&#8594;<%= link_to '重新刊登',"/my_requesting/"+my_requesting.id.to_s()+"/repost" %></li> 
+    	<li>&#8594;<%= link_to '刪除',"/my_requesting/"+my_requesting.id.to_s(), method: :delete, data: { confirm: '確定要刪除 "'+my_requesting.book_list.name+'" ?' } %></li>
+    	<%if my_requesting.available%>
+    	<li>&#8594;<span id="my_button_outline"><%= link_to '已徵到',"/my_requesting/"+my_requesting.id.to_s()+"/unavailable" %></span></li>
+    	<%else%>
+    	<li>&#8594;<span id="my_button_outline_unavail"><%= link_to '已徵到'%></span></li>
+    	<%end%>
+    	</ul>
+    </td>
+  </tr>
+<% end %>
+</table>
+</div>

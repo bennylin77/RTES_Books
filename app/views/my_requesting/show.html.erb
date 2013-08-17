@@ -1,0 +1,140 @@
+<%if !@my_requesting_list.requesting_days.blank?%>
+<script type="text/javascript" charset="utf-8">
+$(function() {
+  var d, h, m, s;
+  $('div#clock_<%=@my_requesting_list.id%>').countdown(new Date(
+  									<%=dayAdd(@my_requesting_list.created_at, @my_requesting_list.requesting_days).utc.to_i*1000%>), function(event) {
+    var timeFormat = "%d<span style=\"font-size: 8px;\">天</span>%h<span style=\"font-size: 8px;\">時</span>%m<span style=\"font-size: 8px;\">分</span>%s<span style=\"font-size: 8px;\">秒</span>"
+        $this = $(this);
+    switch(event.type) {
+      case "days":
+        d = event.value;
+        break;
+      case "hours":
+        h = event.value;
+        break;
+      case "minutes":
+        m = event.value;
+        break;
+      case "seconds":
+        s = event.value;
+        break;
+      case "finished":
+        $this.fadeTo('slow', 0.5);
+        break;
+    }
+    // Assemble time format
+    if(d > 0) {
+      timeFormat = timeFormat.replace(/\%d/, d);
+    } else {
+      timeFormat = timeFormat.replace(/\%d<span style=\"font-size: 8px;\">天<\/span>/, '');
+    }
+    timeFormat = timeFormat.replace(/\%h/, h);
+    timeFormat = timeFormat.replace(/\%m/, m);
+    timeFormat = timeFormat.replace(/\%s/, s);
+    // Display
+    $this.html(timeFormat);
+  });
+});
+</script>
+<%end%>
+<p id="notice"><%= notice %></p>
+</br>
+<div id="clock_<%=@my_requesting_list.id%>" style="font-weight: 700; font-size: 40px;"></div>
+
+<h3 style="width:600px"><%= @my_requesting_list.book_list.name %></h3>
+<div style="display: inline-block;">
+<%if !@my_requesting_list.book_list.image_name.blank? %>	
+<%=image_tag @my_requesting_list.book_list.image_name, :size => "90x100", :alt => "無封面" %><br />
+<%else%>
+<%=image_tag "NoImg.png", :size => "90x100", :alt => "無封面" %><br />
+<%end%>	
+</div>
+<div style="display: inline-block; ">
+<p>
+  <b>哪類課程用書:</b>
+  <%= @my_requesting_list.course %>
+</p>
+<p>
+  <b>價錢:</b>
+  $<%= @my_requesting_list.prefer_price_from %>~$<%= @my_requesting_list.prefer_price_to %>
+</p>
+
+<p>
+  <b>接受缺頁?</b>
+  <%=YNConverter @my_requesting_list.missing %>
+</p>
+
+<p>
+  <b>接受裁剪?</b>
+  <%=YNConverter @my_requesting_list.cutting %>
+</p>
+
+<p>
+  <b>接受髒汙?</b>
+  <%=levelConverter @my_requesting_list.stains,'r' %>
+</p>
+
+<p>
+  <b>接受筆記?</b>
+  <%=levelConverter @my_requesting_list.note,'r' %>
+</p>
+
+</div>
+
+<p>
+  <b>交易地點:</b></br>
+  <%=showingListAreaAndLocation('requesting', @my_requesting_list)%>
+</p>
+<p>
+    <b>連絡方式:</b></br>
+    <%if @my_requesting_list.email_c==true%>
+    email(<%=@my_requesting_list.user.email%>)
+    <%end%>
+	<%if @my_requesting_list.FB_c==true%>
+    FB訊息
+    <%end%>
+    <%if !@my_requesting_list.phone.blank?%>
+    電話:
+    <%= @my_requesting_list.phone%>
+    <%end%>
+</p>
+<div>
+<span id="send_fb_message"><%= link_to '張貼在Facebook上',"/main/post_on_fb?requesting_list_id="+@my_requesting_list.id.to_s%></span>
+<span id="my_button"><%= link_to '修改', @my_requesting_list.id.to_s()+"/edit"  %></span>
+<span id="my_button"><%= link_to '回我的書單',"/main/myBookLists" %></span>
+</div>
+</br>
+<h1>現在有誰在賣這本書</h1></br>
+<%if !@chart_selling.nil?%>
+	<div id='@chart_selling' style='width: 400px; height: 150px ;'></div>
+	<%= render_chart @chart_selling, '@chart_selling' %> 
+  	平均價格為 $<%= @average_price %>
+<%end%>
+<table id="my_table">
+  <tr>
+    <th></th>
+    <th>價錢</th>
+    <th>交易地點</th>
+    <th>時間</th>
+    <th></th>
+  </tr>
+
+<% @selling_lists.each do |selling_list| %>
+  <tr>
+    <td>
+    	<a href=<%="http://www.facebook.com/"+findFacebookIDByUserID(selling_list.user_id )%>><%= image_tag "https://graph.facebook.com/"+findFacebookIDByUserID(selling_list.user_id )+"/picture", :size => "30x30" %>
+    	<!--<div style="display: block"> current_user.profile.mutual_friends(selling_list.user.FB_identifier).count 個共同好友</div>-->
+    	</a>    	  	
+	</td>
+    <td>$<%= selling_list.price %></td>
+    <td><%= truncate(showingListArea("selling", selling_list), :length => 40, :omission => '...')%></td>
+    <td><%= time_ago_in_words(selling_list.created_at) %>之前</td>
+    <td><a href="<%=url_for :controller => "main", :action => "showSellingBook", :id => selling_list%>">詳細資訊..</a></td>      
+  </tr>
+<% end %>
+</table>
+
+
+
+

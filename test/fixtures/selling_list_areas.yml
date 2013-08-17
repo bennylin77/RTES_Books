@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  selling_list_id: 1
+  area: MyString
+  location: MyString
+
+two:
+  selling_list_id: 1
+  area: MyString
+  location: MyString

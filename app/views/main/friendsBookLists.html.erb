@@ -1,0 +1,152 @@
+<style>
+    .table 
+    {   	
+        border-collapse: collapse;
+        border-spacing: 0;
+        display: table;
+        width: 390px;
+        font-size: 10px;	      
+    }
+    .table  a:hover
+    {   	
+		background:none;
+		text-decoration: none;		      
+    }
+    .tr
+    {   	
+        display: table-row, inline-block; 
+    } 
+    .td 
+    {
+		height:80px;
+        border-bottom: dotted #B5DAFF;
+    	color: black;
+        display: table-cell;        
+    }
+    .td:hover 
+    {
+		height:80px;
+        border-bottom: dotted #B5DAFF;
+    	color:#57B6DD;
+        display: table-cell;        
+    }
+</style>
+<h1 style="text-align:center; font-size: 25px;">朋友的書單</h1></br>
+<div class="outline_showing" style="float: left;">
+<h1 style="font-size: 18px;">朋友賣的書</h1>
+<% @friends.each do |friend| %>
+  <% friend.selling_lists.each do |selling_list| %>
+	<section class="table">
+		<a class="tr" href="<%=url_for :controller => "main", :action => "showSellingBook", :id => selling_list%>">
+			<div class="td">
+				<div class="tr">
+				</br>
+				<%if !selling_list.book_list.image_name.blank? %>	
+				<%=image_tag selling_list.book_list.image_name, :size => "65x75", :alt => selling_list.book_list.name%>
+				<%else%>
+				<%=image_tag "NoImg.png", :size => "65x75", :alt => "無封面" %><br />
+				<%end%>	
+				</div>
+				<div class="tr" style="text-align: center; font-size: 12px;" >
+				$<%= selling_list.price %>
+				</div>
+			</div>
+			<div class="td" style="padding-left: 15px; width:250px; height: 40px;">
+				<div class="tr" style="font-weight: 700 ; font-size: 15px; color: #FF3333;" >
+					</br>
+					<%if !selling_list.course.blank?%>	
+					<%=truncate(selling_list.course, :length => 13, :omission => '...') %>
+					<%else%>
+					--	
+					<%end%>
+					<%if !selling_list.available%>
+					<span id="showing_unavail">	
+					已賣出
+					</span>	
+					<%end%>					
+				</div>
+				<div class="tr" style="font-size: 12px; ">
+					<%=truncate( selling_list.book_list.name , :length => 70, :omission => '...')%>
+				</div>			
+				<div class="tr">			
+					<div  style="font-size: 8px; ">
+					詳細資訊..
+					</div>
+				</div>			
+			</div>
+			<div class="td" style="width:80px; text-align: center;  border-bottom: none;">
+				<div class="tr">
+					</br>					
+					<a href=<%="http://www.facebook.com/"+findFacebookIDByUserID(selling_list.user_id )%>><%= image_tag "https://graph.facebook.com/"+findFacebookIDByUserID(selling_list.user_id )+"/picture", :size => "30x30" %></a>
+				</div>
+				<!--<div class="tr">
+				<%# current_user.profile.mutual_friends("bennylin77").count%>個共同好友	
+				</div>-->
+				<div class="tr" style="font-size: 10px; ">
+				<%= time_ago_in_words(selling_list.created_at) %> 之前
+				</div>		
+			</div>
+		</a>
+	</section>
+  <% end %>
+<% end %>
+</div>
+<div class="outline_showing" style="float: left;  border-left: solid #B5DAFF; padding-left: 10px;">
+<h1 style="font-size: 18px;">朋友徵的書</h1>
+<% @friends.each do |friend| %>
+  <% friend.requesting_lists.each do |requesting_list| %>
+	<section class="table">
+		<a class="tr" href="<%=url_for :controller => "main", :action => "showRequestingBook", :id => requesting_list%>">		
+			<div class="td">
+				<div class="tr"  style=" width:70px;">
+				</br>
+				<%if !requesting_list.book_list.image_name.blank? %>	
+				<%=image_tag requesting_list.book_list.image_name, :size => "65x75", :alt => requesting_list.book_list.name%>
+				<%else%>
+				<%=image_tag "NoImg.png", :size => "65x75", :alt => "無封面" %><br />
+				<%end%>	
+				</div>
+				<div class="tr"  style="text-align: center; font-size: 12px;" >
+				$<%= requesting_list.prefer_price_from %>~$<%= requesting_list.prefer_price_to %>
+				</div>
+			</div>
+			<div class="td" style="padding-left: 15px; width:250px; height: 40px;">
+				<div class="tr" style="font-weight: 700 ; font-size: 15px; color: #FF3333;"  >
+					</br>
+					<%if !requesting_list.course.blank?%>	
+					<%=truncate(requesting_list.course, :length => 13, :omission => '...') %>					
+					<%else%>
+					--	
+					<%end%>
+					<%if !requesting_list.available%>
+					<span id="showing_unavail">	
+					已徵到
+					</span>	
+					<%end%>
+				</div>
+				<div class="tr" style="font-size: 12px; ">
+					<%=truncate(  requesting_list.book_list.name , :length => 55, :omission => '...') %>
+				</div>			
+				<div class="tr">			
+					<div  style="font-size: 8px; ">
+					詳細資訊..
+					</div>
+				</div>			
+			</div>
+			<div class="td" style="width:80px; text-align: center;  border-bottom: none;">
+				<div class="tr">
+					</br>					
+					<a href=<%="http://www.facebook.com/"+findFacebookIDByUserID(requesting_list.user_id )%>><%= image_tag "https://graph.facebook.com/"+findFacebookIDByUserID(requesting_list.user_id )+"/picture", :size => "30x30" %></a>
+				</div>
+				<!--<div class="tr">
+				<%# current_user.profile.mutual_friends("bennylin77").count%>個共同好友	
+				</div>-->
+				<div class="tr" style="font-size: 10px; ">
+				<%= time_ago_in_words(requesting_list.created_at) %> 之前
+				</div>		
+			</div>
+		</a>
+	</section> 
+  <% end %>
+<% end %>
+</div>

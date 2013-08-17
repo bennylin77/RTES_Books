@@ -1,0 +1,171 @@
+<style>
+    .table 
+    {   	
+        border-collapse: collapse;
+        border-spacing: 0;
+        display: table;
+        /*width: 390px;*/
+        /*font-size: 10px;*/
+    }
+    .table  a:hover
+    {   	
+		background:none;
+		text-decoration: none;		      
+    }
+    .tr
+    {   	
+        display: table-row, inline-block; 
+    } 
+    .td 
+    {
+    	min-width:75px;
+		height:30px;
+        /*border-bottom: dotted #B5DAFF;*/
+    	color: black;
+        display: table-cell;        
+    }
+</style>
+<%if !@requesting_list.requesting_days.blank?%>
+<script type="text/javascript" charset="utf-8">
+$(function() {
+  var d, h, m, s;
+  $('div#clock_<%=@requesting_list.id%>').countdown(new Date(
+  									<%=dayAdd(@requesting_list.created_at, @requesting_list.requesting_days).utc.to_i*1000%>), function(event) {
+    var timeFormat = "%d<span style=\"font-size: 8px;\">天</span>%h<span style=\"font-size: 8px;\">時</span>%m<span style=\"font-size: 8px;\">分</span>%s<span style=\"font-size: 8px;\">秒</span>"
+        $this = $(this);
+    switch(event.type) {
+      case "days":
+        d = event.value;
+        break;
+      case "hours":
+        h = event.value;
+        break;
+      case "minutes":
+        m = event.value;
+        break;
+      case "seconds":
+        s = event.value;
+        break;
+      case "finished":
+        $this.fadeTo('slow', 0.5);
+        break;
+    }
+    // Assemble time format
+    if(d > 0) {
+      timeFormat = timeFormat.replace(/\%d/, d);
+    } else {
+      timeFormat = timeFormat.replace(/\%d<span style=\"font-size: 8px;\">天<\/span>/, '');
+    }
+    timeFormat = timeFormat.replace(/\%h/, h);
+    timeFormat = timeFormat.replace(/\%m/, m);
+    timeFormat = timeFormat.replace(/\%s/, s);
+    // Display
+    $this.html(timeFormat);
+  });
+});
+</script>
+<%end%>
+<p id="notice"><%= notice %></p>
+<p>
+  <div style="display: inline-block;">	
+  <a href=<%="http://www.facebook.com/"+findFacebookIDByUserID( @requesting_list.user_id )%>><%= image_tag "https://graph.facebook.com/"+findFacebookIDByUserID( @requesting_list.user_id )+"/picture", :size => "60x60" %></a>
+  </div>
+  <%if !@requesting_list.available%>	
+  <div id="show_detail_unavail" style="display: inline-block;">已徵到</div>
+  <%end%>
+  <div style="display: inline-block; float: right;">
+  希望在<div id="clock_<%=@requesting_list.id%>" style="font-weight: 700; font-size: 40px; display: inline-block;"></div>內徵到此書
+  </div>	
+  <h3 style="width:600px"><%= @requesting_list.book_list.name %></h3>
+  <b>哪類課程用書:</b><%= @requesting_list.course %> 
+</p>
+<div style="display: inline-block;">
+<%if !@requesting_list.book_list.image_name.blank? %>	
+<%=image_tag @requesting_list.book_list.image_name, :size => "90x100", :alt => @requesting_list.book_list.name %>
+<%else%>
+<%=image_tag "NoImg.png", :size => "90x100", :alt => "無封面" %>
+<%end%>	
+</div>
+<div style="display: inline-block; ">
+<section class="table">
+<div class="tr">
+  	<div class="td">作者:</div><div class="td"><%= @requesting_list.book_list.author %></div>
+</div>
+<div class="tr">
+  	<div class="td">ISBN:</div><div class="td"><%= @requesting_list.book_list.ISBN %></div>
+</div>
+<div class="tr">
+    <div class="td">語言:</div><div class="td"><%= @requesting_list.book_list.language %></div>
+</div> 
+<div class="tr">	
+	<div class="td">出版商:</div><div class="td"><%= @requesting_list.book_list.publisher %></div>
+</div>
+</section>
+</div>
+<section class="table">
+<div class="tr">
+  <div class="td">希望價錢:</div>
+  <div class="td">$<%= @requesting_list.prefer_price_from %>~$<%= @requesting_list.prefer_price_to %></div>
+</div>
+<div class="tr">
+  <div class="td">接受缺頁?</div>
+  <div class="td"><%=YNConverter  @requesting_list.missing %></div>
+</div>
+
+<div class="tr">
+  <div class="td">接受裁剪?</div>
+  <div class="td"><%=YNConverter  @requesting_list.cutting %></div>
+</div>
+
+<div class="tr">
+  <div class="td">接受髒汙?</div>
+  <div class="td"><%=levelConverter @requesting_list.stains,'r' %></div>
+</div>
+
+<div class="tr">
+  <div class="td">接受筆記?</div>
+  <div class="td"><%=levelConverter @requesting_list.note,'r' %></div>
+</div>
+<div class="tr">
+  <div class="td">交易地點:</div>
+  <div class="td"><%= showingListAreaAndLocation("requesting",@requesting_list)%></div>
+</div>
+<div class="tr">
+  <div class="td">連絡方式:</div>
+  <div class="td">
+    <%if @requesting_list.email_c==true%>
+    <p>
+    可透過email連絡-
+    <%=@requesting_list.user.email%>
+    </p>
+    <%end%>
+    <%if @requesting_list.FB_c==true%>
+    <p>
+    可透過FB訊息連絡-
+    <!--<%=link_to  "點我傳送訊息","sendMessagejs?sended_requesting_list_id="+@requesting_list.id.to_s, :remote=>true %>-->
+    <span id="send_fb_message"><a href="sendMessagejs?sended_requesting_list_id=<%=@requesting_list.id.to_s%>" data-remote="true">點我傳送FB訊息</a></span>
+    </p>
+    <%end%>
+    <%if !@requesting_list.phone.blank?%>
+    <p>
+    可透過電話連絡-
+    <%= @requesting_list.phone%>
+    </p>
+	<%end%>
+  </div>	
+</div>
+</section>
+<!--comment-->
+<div class="fb-comments" data-href="<%=dns_name%>/main/showRequestingBook?id=<%=@requesting_list.id%>" data-num-posts="5" data-width="400"></div>
+<script>
+    FB.Event.subscribe('comment.create',
+    	function (response) 
+    	{
+        	var commentQuery = FB.Data.query("SELECT text, fromid FROM comment WHERE post_fbid='" + response.commentID +
+                "' AND object_id IN (SELECT comments_fbid FROM link_stat WHERE url='" + response.href + "')");
+            FB.Data.waitOn([commentQuery], function () {
+                var commentRow = commentQuery.value[0];        	
+            $.get("/main/fbCommentNotification", { requesting_list_id: <%=@requesting_list.id %>, user: commentRow.fromid, comment: commentRow.text} );                        
+            });	
+    });
+</script>

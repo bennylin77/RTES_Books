@@ -1,0 +1,167 @@
+<script type="text/javascript">
+$(function() 
+{
+	$( "#requesting_list_name" ).autocomplete
+	({
+		source: "auto_complete_for_book_list_name",
+		delayType: 500,
+		minLength: 2,
+		select:    function(event, data)
+		    { 
+			  		document.location=('/main/requestingPage1?selected_book_list_isbn='+data.item.isbn+'&selected_book_list_is_google='+data.item.is_google+'&selected_book_list_name='+data.item.value);			
+			}						
+	}).data("autocomplete")._renderItem = function (ul, item) {
+		return $( "<li></li>" )
+		.data( "item.autocomplete", item )
+		.append("<a><img src='" + item.link + "' alt='"+item.label+"' height='70' width='60'/>" + item.label + "</a>")
+		.appendTo( ul );
+	}; 
+	
+	$( "#requesting_list_ISBN" ).autocomplete
+	({
+		source: "auto_complete_for_book_list_isbn",
+		delayType: 500,
+		minLength: 2,
+		select:    function(event, data)
+		    { 
+			  		document.location=('/main/requestingPage1?selected_book_list_isbn='+data.item.isbn);			
+			}						
+	}).data("autocomplete")._renderItem = function (ul, item) {
+		return $( "<li></li>" )
+		.data( "item.autocomplete", item )
+		.append("<a><img src='" + item.link + "'alt='"+item.label+"' height='70' width='60'/>" + item.label + "</a>")
+		.appendTo( ul );
+	}; 
+
+	$( "#requesting_list_author" ).autocomplete
+	({
+		source: "auto_complete_for_book_list_author",
+		delayType: 500,
+		minLength: 2,
+		select:    function(event, data)
+		    { 
+			  		document.location=('/main/requestingPage1?selected_book_list_isbn='+data.item.isbn+'&selected_book_list_is_google='+data.item.is_google+'&selected_book_list_name='+data.item.value);			
+			}						
+	}).data("autocomplete")._renderItem = function (ul, item) {
+		return $( "<li></li>" )
+		.data( "item.autocomplete", item )
+		.append("<a><img src='" + item.link + "' alt='"+item.label+"' height='70' width='60'/>" + item.label + "</a>")
+		.appendTo( ul );
+	}; 
+});
+</script>
+<%if @book_list%>
+	<% if @book_list.errors.any? %>
+	</br>
+    <div id="error_explanation">
+      <h2><%= @book_list.errors.count.to_s+"個錯誤" %></h2>
+      <ul>
+      <% @book_list.errors.each do |key, value| %>
+        <li><%= value %></li>
+      <% end %>
+      </ul>
+    </div>
+	<% end %>
+<% end %>
+<%= form_for :requesting_list, :url=>{:action=>:requestingPage2} do |f| %>
+<!--hide field start-->
+<div style="display: none">
+  <div class="field">
+    <%= f.label :book_list_id %><br />
+    <%= f.text_field :book_list_id %>
+  </div>
+</div> 
+<!--hide field end-->
+<br />
+<div style="border-bottom: dotted #B5DAFF;">
+  <div class="field">
+    <span style="color: red; display: inline">*</span>  	
+    ISBN<span style="font-size: 10px; display: inline">(書皮背面條碼處)</span><br />
+  	<div class="ui-widget">    		
+    <%= f.text_field :ISBN, :size => 15 %>
+    </div>
+  </div>
+  <div class="field">
+    <span style="color: red; display: inline">*</span>書名<br />
+  	<div class="ui-widget">
+   	<%if !@requesting_list.book_list_id.blank?%>  	
+  		<%if @requesting_list.book_list.is_google%>   					
+  			<%= f.text_area :name, :cols => 30, :rows=> 2, :disabled=>true%>
+		<%else%> 
+  			<%= f.text_area :name, :cols => 30, :rows=> 2 %>			
+		<%end%> 		
+	<%else%>
+  		<%= f.text_area :name, :cols => 30, :rows=> 2 %>	
+	<%end%>
+	</div>
+  </div>
+</div>   
+  <div class="field">
+    <%= f.label :作者 %><br />
+    <div class="ui-widget">  
+   	<%if !@requesting_list.book_list_id.blank?%>  	
+  		<%if @requesting_list.book_list.is_google%>     		
+    		<%= f.text_field :author, :size => 30, :disabled=>true%>
+    	<%else%>
+    		<%= f.text_field :author, :size => 30%>    	
+    	<%end%>
+    <%else%>	
+     	<%= f.text_field :author, :size => 30%>   
+    <%end%>	
+    </div>
+  </div>
+  <div class="field">  	
+  <%if !@requesting_list.book_list_id.blank?%>  	
+  	<%if @requesting_list.book_list.is_google%>  
+	  	<%= f.radio_button(:language, "zh-TW", :disabled=>true) %>
+		<%= f.label  "正體" %>
+		<%= f.radio_button(:language, "zh-CN", :disabled=>true) %>
+		<%= f.label  "簡体" %>
+		<%= f.radio_button(:language, "en", :disabled=>true) %>
+		<%= f.label  "英文" %>
+		<%= f.radio_button(:language, "Oth", :disabled=>true) %>
+		<%= f.label  "其它" %>
+  	<%else%>
+	  	<%= f.radio_button(:language, "zh-TW") %>
+		<%= f.label  "正體" %>
+		<%= f.radio_button(:language, "zh-CN") %>
+		<%= f.label  "簡体" %>
+		<%= f.radio_button(:language, "en") %>
+		<%= f.label  "英文" %>
+		<%= f.radio_button(:language, "Oth") %>
+		<%= f.label  "其它" %> 	
+  	<%end%>	
+  <%else%>
+  	<%= f.radio_button(:language, "zh-TW") %>
+	<%= f.label  "正體" %>
+	<%= f.radio_button(:language, "zh-CN") %>
+	<%= f.label  "簡体" %>
+	<%= f.radio_button(:language, "en") %>
+	<%= f.label  "英文" %>
+	<%= f.radio_button(:language, "Oth") %>
+	<%= f.label  "其它" %>  	
+  <%end%>	
+  </div>
+  <%if !@requesting_list.book_list_id.nil?%>
+  <div class="field">
+    <%= f.label :出版商 %><br />
+  	<%if @requesting_list.book_list.is_google%>
+    	<%= f.text_field :publisher, :size => 30, :disabled=>true%>
+    <%else%>
+   		<%= f.text_field :publisher, :size => 30%>    
+    <%end%>
+  </div>
+  <%end%>
+  <div class="field"> 	
+    <%if !@requesting_list.image_name.nil?%>
+    	<%=image_tag @requesting_list.image_name, :size => "80x90", :alt => "無封面" %><br />
+    <%end%>
+<!--    
+    <%= f.text_field :image_name %>
+-->  
+  </div>
+  <div class="actions">
+    <%= f.submit "下一步" %><%if !@requesting_list.book_list_id.blank?%><span id="my_button"> <%= link_to "重填", "/main/requestingPage1" %></span><%end%>
+  </div>
+<% end %>
+<span style="color: red;">*</span>必填

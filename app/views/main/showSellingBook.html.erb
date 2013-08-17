@@ -1,0 +1,132 @@
+<style>
+    .table 
+    {   	
+        border-collapse: collapse;
+        border-spacing: 0;
+        display: table;
+        /*width: 390px;*/
+        /*font-size: 10px;*/
+    }
+    .table  a:hover
+    {   	
+		background:none;
+		text-decoration: none;		      
+    }
+    .tr
+    {   	
+        display: table-row, inline-block; 
+    } 
+    .td 
+    {
+    	min-width:75px;
+		height:30px;
+        /*border-bottom: dotted #B5DAFF;*/
+    	color: black;
+        display: table-cell;        
+    }
+</style>
+<p id="notice"><%= notice %></p>
+<p>
+  <div style="display: inline-block;">		
+  <a href=<%="http://www.facebook.com/"+findFacebookIDByUserID( @selling_list.user_id )%>><%= image_tag "https://graph.facebook.com/"+findFacebookIDByUserID( @selling_list.user_id )+"/picture", :size => "60x60" %></a>
+  </div>
+  <%if !@selling_list.available%>	
+  <div id="show_detail_unavail" style="display: inline-block;">已賣出</div>
+  <%end%>
+  <h3 style="width:600px"><%= @selling_list.book_list.name %></h3>
+  <b>哪類課程用書:</b><%= @selling_list.course %> 
+</p>
+<div style="display: inline-block;">
+<%if !@selling_list.book_list.image_name.blank? %>	
+<%=image_tag @selling_list.book_list.image_name, :size => "90x100", :alt => @selling_list.book_list.name %>
+<%else%>
+<%=image_tag "NoImg.png", :size => "90x100", :alt => "無封面" %>
+<%end%>		
+</div>
+<div style="display: inline-block; ">
+<section class="table">
+<div class="tr">
+  	<div class="td">作者:</div><div class="td"><%= @selling_list.book_list.author %></div>
+</div>
+<div class="tr">
+  	<div class="td">ISBN:</div><div class="td"><%= @selling_list.book_list.ISBN %></div>
+</div>
+<div class="tr">
+  	<div class="td">語言:</div><div class="td"><%=languageTranslator( @selling_list.book_list.language )%></div>
+</div>
+<div class="tr">
+	<div class="td">出版商:</div><div class="td"><%= @selling_list.book_list.publisher %></div>
+</div>
+</section>
+</div>
+<section class="table">
+<div class="tr">
+  <div class="td">價錢:</div>
+  <div class="td">$<%= @selling_list.price %></div>
+</div>
+<div class="tr">
+  <div class="td">可議價?</div>
+  <div class="td"><%=YNConverter @selling_list.bargain %></div>
+</div>
+<div class="tr">
+  <div class="td">有缺頁?</div>
+  <div class="td"><%=YNConverter @selling_list.missing %></div>
+</div>  
+<div class="tr">
+  <div class="td">裁剪過?</div>
+  <div class="td"><%=YNConverter @selling_list.cutting %></div>
+</div>  
+<div class="tr">
+  <div class="td">髒汙?</div>
+  <div class="td"><%=levelConverter @selling_list.stains, 's' %></div>
+</div>  
+<div class="tr">
+  <div class="td">有筆記?</div>
+  <div class="td"><%=levelConverter @selling_list.note, 's' %></div>
+</div>  
+<div class="tr">
+  <div class="td">交易地點:</div>
+  <div class="td"><%= showingListAreaAndLocation("selling",@selling_list)%></div>
+</div>
+<div class="tr">
+  <div class="td">連絡方式:</div>
+  <div class="td">
+    <%if @selling_list.email_c==true%>
+    <div class="tr">
+    <div class="td">可透過email連絡-</div>
+    <div class="td"><%=@selling_list.user.email%></div>
+    </div>
+    <%end%>
+    <%if @selling_list.FB_c==true%>
+ 	<div class="tr">
+ 	<div class="td">可透過FB訊息連絡-</div>
+    <div class="td"><span id="send_fb_message"><a href="sendMessagejs?sended_selling_list_id=<%=@selling_list.id.to_s%>" data-remote="true">點我傳送FB訊息</a></span></div>
+    </div>
+    <%end%>
+    <%if !@selling_list.phone.blank?%>
+  	<div class="tr">
+  	<div class="td">可透過電話連絡-</div>
+  	<div class="td"><%= @selling_list.phone%></div>
+	</div>
+	<%end%>
+  </div>	
+</div>
+<div class="tr">
+	補充:<br/>
+    <span style="font-weight: 900; "><%=Rinku.auto_link(  simple_format(@selling_list.addition), :all, 'target="_blank"' ).html_safe%></span>
+</div>
+</section>
+<!--comment-->
+<div class="fb-comments" data-notify="true" data-href="<%=dns_name%>/main/showSellingBook?id=<%=@selling_list.id%>" data-num-posts="5" data-width="400"></div>
+<script>
+    FB.Event.subscribe('comment.create',
+    	function (response) 
+    	{
+        	var commentQuery = FB.Data.query("SELECT text, fromid FROM comment WHERE post_fbid='" + response.commentID +
+                "' AND object_id IN (SELECT comments_fbid FROM link_stat WHERE url='" + response.href + "')");
+            FB.Data.waitOn([commentQuery], function () {
+                var commentRow = commentQuery.value[0];        	
+            $.get("/main/fbCommentNotification", { selling_list_id: <%=@selling_list.id %>, user: commentRow.fromid, comment: commentRow.text} );                        
+            });	
+    });
+</script>

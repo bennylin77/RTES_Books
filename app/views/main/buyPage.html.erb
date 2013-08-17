@@ -1,0 +1,125 @@
+<script type="text/javascript">
+$(function() 
+{
+	$( "#search_name" ).autocomplete
+	({
+		source: "auto_complete_for_SearchBookListName",
+		delayType: 150,
+		minLength: 2,
+		//select:    function(event, data)
+		//    { 
+				//document.location=('/main/requestingPage1?search[term]='+data.item.value);			
+		//	}						
+	}).data("autocomplete")._renderItem = function (ul, item) {
+		return $( "<li></li>" )
+		.data( "item.autocomplete", item )
+		.append("<a><img src='" + item.link + "' alt='無圖' height='70' width='60'/>" + item.label + "</a>")
+		.appendTo( ul );
+	}; 
+});
+</script>
+<style>
+    .table 
+    {   	
+        border-collapse: collapse;
+        border-spacing: 0;
+        display: table;
+        width: 600px;
+        font-size: 15px;
+       
+ 		      
+    }
+    .table  a:hover
+    {   	
+		background:none;
+		text-decoration: none;		      
+    }
+    .tr
+    {   	
+        display: table-row, inline-block; 
+    } 
+    .td 
+    {
+		height:100px;
+        border-bottom: dotted #B5DAFF;
+    	color: black;
+        display: table-cell;        
+    }
+    .td:hover 
+    {
+		height:100px;
+        border-bottom: dotted #B5DAFF;
+    	color:#57B6DD;
+        display: table-cell;        
+    }
+</style>
+
+<%= form_tag  "buyPage", :method =>:get do %>
+	<div class="ui-widget" style="display: inline-block">		
+		<%= text_field  :search, :name, :size=>50 %>
+	</div>
+	<div style="display: inline-block">	
+		<%= submit_tag "搜尋賣書單" %>
+	</div>
+<% end %>
+<%if @book_lists%>
+	<%@book_lists.each do |b| %>
+		<div style="border-bottom: dotted #B5DAFF;">
+			<div style="display: inline-block;">
+			<%if !b.image_name.blank? %>	
+			<%=image_tag b.image_name, :size => "90x100", :alt => b.name %><br />
+			<%else%>
+			<%=image_tag "NoImg.png", :size => "90x100", :alt => "無封面" %><br />
+			<%end%>		
+			</div>
+			<div style="display: inline-block; ">
+			<p>
+				<p>
+			  	<b>作者:</b><%= b.author %>
+			  	</p>
+			  	<p>
+			  	<b>ISBN:</b><%= b.ISBN %>
+			    </p>
+			    <p>
+			    <b>版本:</b><%= b.edition %>
+			    </p>
+			    <p>
+			  	<b>語言:</b>
+				<%= b.language %>
+				<b>出版商:</b>
+				<%= b.publisher %>
+				</p>
+			</p>
+			</div>
+			<%if !b.chart_selling.nil?%>
+				<div id='<%=b.name%>' style='width: 400px; height: 150px ;'></div>
+				<%= render_chart b.chart_selling, b.name %> 
+			  	平均價格為 $<%= b.average_price %>
+			<%end%>
+			</br>
+			<table>
+			  <tr>
+			    <th></th>
+			    <th>希望價格</th>
+			    <th>交易地點</th>
+			    <th>時間</th>
+			    <th></th>
+			  </tr>
+			
+			<% b.selling_lists.each do |selling_list| %>
+			  <tr>
+			    <td>
+			    	<a href=<%="http://www.facebook.com/"+findFacebookIDByUserID(selling_list.user_id )%>><%= image_tag "https://graph.facebook.com/"+findFacebookIDByUserID(selling_list.user_id )+"/picture", :size => "30x30" %>
+			    		<div style="display: block"><%= current_user.profile.mutual_friends(selling_list.user.FB_identifier).count%>個共同好友</div>
+			    	</a>    	  	
+				</td>
+			    <td>$<%= selling_list.price %></td>
+			    <td><%= selling_list.area %></td>
+			    <td><%= time_ago_in_words(selling_list.created_at) %>之前</td>
+			    <td><a href="<%=url_for :controller => "main", :action => "showSellingBook", :id => selling_list%>">詳細資訊..</a></td>      
+			  </tr>
+			<% end %>
+			</table>
+		</div>
+	<%end%>	
+<%end%>	 

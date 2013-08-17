@@ -1,0 +1,22 @@
+<div class="head">
+	<div class="top_container">
+		<div id="title">
+    		<span style="display: inline-block ; font-size: 50px; font-weight: 900;"><%= link_to "RTES", root_path %></span>
+    		<span style="font-size: 30px; display: inline-block ;color: #CCCCCC;">books</span>
+    		<span style="font-size: 16px; display: inline-block ;color: #CCCCCC; font-weight: 700;" >校園面交平台</span>
+		</div>
+        <div id="avatar">			
+			<% if authenticated? %>
+        	    <fb:profile-pic uid="<%= current_user.try(:identifier) %>" size="square" facebook-logo="true" linked="true"></fb:profile-pic>				
+		  		<table><tr><td><%= link_to "登出", facebook_path, :method => :delete %></td><td><%= link_to image_tag("setting_icon.png", :size=>"25x25") ,edit_user_config_path(User.find(session[:user_id]).user_config)%></td></tr></table>
+			<% else %>	
+			    <fb:profile-pic uid="<%= current_user.try(:identifier) %>" size="square" facebook-logo="true" linked="true"></fb:profile-pic>					   	  
+				<div style="margin-right: 30px; margin-top: 35px;" class="fb-login-button" data-width="400" data-size="large" data-max-rows="1" data-scope="<%= Facebook.config[:scope]%>" onlogin="location.href = '<%= facebook_path %>'"></div>
+			<% end %>		
+		</div>
+	</div>
+</div>
+
+
+
+

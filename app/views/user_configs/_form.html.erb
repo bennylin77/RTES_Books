@@ -1,0 +1,131 @@
+<style>
+    .table 
+    {   	
+        border-collapse: collapse;
+        border-spacing: 0;
+        display: table;
+        /*width: 390px;*/
+        /*font-size: 10px;*/
+    }
+    .table  a:hover
+    {   	
+		background:none;
+		text-decoration: none;		      
+    }
+    .tr
+    {   	
+        display: table-row, inline-block; 
+    } 
+    .td 
+    {
+    	min-width:90px;
+		height:30px;
+        /*border-bottom: dotted #B5DAFF;*/
+    	color: black;
+        display: table-cell;        
+    }
+</style>
+<br>
+<%= form_for(@user_config) do |f| %>
+  <% if @user_config.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@user_config.errors.count, "error") %> 儲存失敗:</h2>
+      <ul>
+      <% @user_config.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <br />
+  
+  <section class="table">
+  	<div class="tr">
+	    <div class="td">自動寄送有人賣書通知?</div>  
+	    <div class="td"><%= f.check_box :sys_selling_email %></div> 
+	</div>
+  	<div class="tr">
+    	<div class="td">自動寄送有人徵書通知?</div> 
+    	<div class="td"><%= f.check_box :sys_requesting_email %></div> 
+	</div>
+  	<div class="tr">
+  		<div class="td">預設面交學校:</div> 
+    	<div class="td"><%=f.select  :default_trading_school, options_for_select( schoolOptionsId("both"), @user_config.default_trading_school), {:include_blank => '請選擇..'} %></div>
+	</div>
+  	<div class="tr" style="border-bottom: dotted #B5DAFF;">
+  		<div class="td">預設首頁學校:</div> 
+    	<div class="td"><%=f.select  :default_index, options_for_select( schoolOptionsId("both"), @user_config.default_index), {:include_blank => '請選擇..'} %></div> 
+	</div>  
+  	<div class="tr">
+		<div class="td">
+   		交易地區選單:</div>	
+	    <%if @user_menu_lists.count==0%>
+	    <%if User.find_by_id(session[:user_id]).educations.count!=0%> 
+	   	<div class="td">
+ 			<%= select_tag 'area[0]', options_for_select( schoolOptionsId("both") ), {:prompt => "請選擇.."} %> 
+   		<%else%>
+   		<div class="td">
+ 			<%= select_tag 'area[0]', options_for_select( schoolOptionsId("both") ), {:prompt => "請選擇.."} %>
+   		<%end%>		
+   		</div>	
+   		<%end%>	
+	</div>
+	<div id="extraField">
+		<% @user_menu_lists.each_with_index do |value, index|%>
+			<div class="tr" id="area_block_<%=index%>">
+				<script type="text/javascript">
+				extra_ip= <%=index+1%>;
+				</script>	
+				<div class="td">
+				</div>
+				<div class="td">		
+				<%= select_tag 'area['+index.to_s+']', options_for_select( schoolOptionsId("both") , value.school_list_id ), {:prompt => "請選擇.."} %> 
+				</div>
+			</div>
+		<%end%>		
+	</div>
+  	<div class="tr">
+		<div class="td">
+	 	</div>	
+	 	<div class="td">
+			<input type="button" onclick="addInput()" name="add" value="新增學校" />
+		</div>
+		<div class="td">		
+			<input type="button" onclick="delInput()" name="add" value="刪除學校" />
+		</div>
+  	</div>
+  	<div class="tr">
+  		<div class="td">	
+    <%= f.submit "儲存"%>
+  		</div>    
+    </div>
+  </section> 
+<% end %>
+
+<script type="text/javascript">
+	if(typeof extra_ip == 'undefined')
+		extra_ip = 1;
+	function addInput() 
+	{	
+    	$("#extraField").append("<div class='tr' id='area_block_"+
+    							extra_ip.toString()+
+    							"'><div class='td'></div><div class='td'>"+
+								"<select id='area_"+
+								extra_ip.toString()+ 
+								"' name='area["+ 
+								extra_ip.toString()+
+								"]'>"+
+								document.getElementById('area_0').innerHTML+
+								"</select></div>"+
+								"</div>");												   
+		extra_ip++;
+	}
+	function delInput()
+	{
+		if(extra_ip!=1)
+		{
+			extra_ip--;
+			$("#area_block_"+extra_ip.toString()).remove();
+		}	
+	}
+</script>

@@ -1,0 +1,15 @@
+      FB.ui({
+      	  to: '<%=@sended_user.FB_identifier%>',
+          method: 'send',
+          <%if !@list.book_list.image_name.blank?%>
+          picture: '<%=@list.book_list.image_name%>',
+          <%end%>
+          name: '<%=@list.book_list.name%>',
+          <%if @sended_selling_list%>
+          description:'校園面交平台',
+          link: '<%=dns_name%>/main/showSellingBook?id=<%=@list.id.to_s%>',
+          <%elsif @sended_requesting_list%>
+          description:'校園面交平台',
+          link: '<%=dns_name%>/main/showRequestingBook?id=<%=@list.id.to_s%>',
+          <%end%>
+          });

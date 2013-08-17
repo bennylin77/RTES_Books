@@ -1,0 +1,72 @@
+<script type="text/javascript">
+$(function() 
+{
+	$( "#search_name" ).autocomplete
+	({
+		source: "auto_complete_for_SearchBookList",
+		delayType: 300,
+		minLength: 2,
+		//select:    function(event, data)
+		//    { 
+				//document.location=('/main/requestingPage1?search[term]='+data.item.value);			
+		//	}						
+	}).data("autocomplete")._renderItem = function (ul, item) {
+		return $( "<li></li>" )
+		.data( "item.autocomplete", item )
+		.append("<a><img src='" + item.link + "' alt='無圖' height='60' width='50'/>" + item.label + "</a>")
+		.appendTo( ul );
+	}; 
+});
+</script>
+<style>
+    .table 
+    {   	
+        border-collapse: collapse;
+        border-spacing: 0;
+        display: table;
+        width: 390px;
+        font-size: 10px; 
+    }
+    .table  a:hover
+    {   	
+		background:none;
+		text-decoration: none;		      
+    }
+    .tr
+    {   	
+        display: table-row, inline-block; 
+    } 
+    .td 
+    {
+		height:80px;
+        border-bottom: dotted #B5DAFF;
+    	color: black;
+        display: table-cell;        
+    }
+    .td:hover 
+    {
+		height:80px;
+        border-bottom: dotted #B5DAFF;
+    	color:#57B6DD;
+        display: table-cell;        
+    }
+
+</style>
+
+<h1 style="font-size: 18px;"><a href="/main/requestingPage1">目前全國賣書</a></h1></br>	
+<%if !/\Wmain\WrequestingPage1.*/.match("#{request.fullpath}").nil? %>
+	<%= form_tag  "requestingPage1", :method =>:get do %>
+		<div class="ui-widget" style="display: inline-block">		
+		<%= text_field  :search, :name, :size=>35 %>
+		</div>
+		<div style="display: inline-block">	
+		<%= submit_tag "搜尋賣書" %>
+		</div>
+	<% end %>
+<%end%>
+ 
+<%= render(:partial => "layouts/showing_selling_list", :collection => @showing_selling_lists)|| '抱歉, 沒有任何結果' %>
+<%if  !@showing_selling_lists.kind_of?(Array)%>
+<%= will_paginate(@showing_selling_lists) %>
+<%= pageless(@showing_selling_lists.total_pages, 'allList?type=selling') %>
+<%end%>

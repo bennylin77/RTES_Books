@@ -1,0 +1,105 @@
+<p id="notice"><%= notice %></p>
+</br>
+<h3 style="width:600px"><%= @my_selling_list.book_list.name %></h3>
+<div style="display: inline-block;">
+<%if !@my_selling_list.book_list.image_name.blank? %>	
+<%=image_tag @my_selling_list.book_list.image_name, :size => "90x100", :alt => "無封面" %><br />
+<%else%>
+<%=image_tag "NoImg.png", :size => "90x100", :alt => "無封面" %><br />
+<%end%>
+</div>
+<div style="display: inline-block; ">
+<p>
+  <b>哪類課程用書:</b>
+  <%= @my_selling_list.course %>
+</p>
+
+<p>
+  <b>價錢:</b>
+  $<%= @my_selling_list.price %>
+</p>
+
+<p>
+  <b>可議價?</b>
+  <%=YNConverter @my_selling_list.bargain %>
+</p>
+
+<p>
+  <b>有缺頁?</b>
+  <%=YNConverter @my_selling_list.missing %>
+</p>
+
+<p>
+  <b>裁剪過?</b>
+  <%=YNConverter @my_selling_list.cutting %>
+</p>
+
+<p>
+  <b>髒汙?</b>
+  <%=levelConverter @my_selling_list.stains,'s' %>
+</p>
+
+<p>
+  <b>有筆記?</b>
+  <%=levelConverter @my_selling_list.note,'s' %>
+</p>
+
+</div>
+
+<p>
+  <b>交易地點:</b></br>
+  <%=showingListAreaAndLocation('selling', @my_selling_list)%>
+</p>  
+
+<p>
+    <b>連絡方式:</b></br>
+    
+    <%if @my_selling_list.email_c==true%>
+    email(<%=@my_selling_list.user.email%>)
+    <%end%>
+	<%if @my_selling_list.FB_c==true %>
+    FB訊息
+    <%end%>
+    <%if !@my_selling_list.phone.blank?%>
+    電話:
+    <%= @my_selling_list.phone%>
+    <%end%>
+</p>
+
+<p>
+	<b>補充: </b></br>
+	<%=Rinku.auto_link( simple_format(@my_selling_list.addition), :all, 'target="_blank"').html_safe%>
+</p>
+
+<div>
+<span id="send_fb_message"><%= link_to '張貼在Facebook上',"/main/post_on_fb?selling_list_id="+@my_selling_list.id.to_s%></span> 
+<span id="my_button"><%= link_to '修改', @my_selling_list.id.to_s()+"/edit"  %></span> 
+<span id="my_button"><%= link_to '回我的書單',"/main/myBookLists" %></span> 
+</div>
+</br>
+
+<h1>現在有誰在徵這本書</h1></br>
+<table id="my_table">
+  <tr>
+    <th></th>
+    <th>希望價錢</th>
+    <th>交易地點</th>
+    <th>時間</th>
+    <th></th>
+  </tr>
+<% @requesting_lists.each do |requesting_list| %>
+  <tr>
+    <td>
+    	<a href=<%="http://www.facebook.com/"+findFacebookIDByUserID(requesting_list.user_id )%>><%= image_tag "https://graph.facebook.com/"+findFacebookIDByUserID(requesting_list.user_id )+"/picture", :size => "30x30" %>
+    		<!--<div style="display: block"> current_user.profile.mutual_friends(requesting_list.user.FB_identifier).count 個共同好友</div>-->
+    	</a>    	  	
+	</td>
+    <td>$<%= requesting_list.prefer_price_from %>~$<%= requesting_list.prefer_price_to %></td>
+    <td><%= truncate(showingListArea("requesting", requesting_list), :length => 40, :omission => '...')%></td>
+    <td><%= time_ago_in_words(requesting_list.created_at) %>之前</td>
+    <td><a href="<%=url_for :controller => "main", :action => "showRequestingBook", :id => requesting_list%>">詳細資訊..</a></td>      
+  </tr>
+<% end %>
+</table>
+
+

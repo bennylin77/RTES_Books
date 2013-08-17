@@ -18,7 +18,6 @@ gem 'will_paginate', '~> 3.0'
 gem "googlebooks", "~> 0.0.6"
 gem 'isbn_validation'
 gem 'masonry-rails'
-gem 'zxing'
 
 
 gem 'rails-i18n' 

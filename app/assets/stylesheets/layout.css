@@ -269,7 +269,7 @@ body > .container .main #type_button a
 
 body > .container .main #type_button a:hover
 {
-	color: #AFCCDD;
+	color: #C4C4C4;
 	padding: 5px 5px;
 	border-radius: 3px; 
 	font-size: 17px;
@@ -279,7 +279,7 @@ body > .container .main #type_button a:hover
 
 body > .container .main #type_button_current a
 {
-	color: #AFCCDD;
+	color: #C4C4C4;
 	padding: 5px 5px;
 	border-radius: 3px; 
 	font-size: 17px;

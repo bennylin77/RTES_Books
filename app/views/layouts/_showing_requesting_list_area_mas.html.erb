@@ -38,7 +38,7 @@ $(function() {
 });
 </script>
 <%end%>
-<div class="box ccol" style="background-color: #FFFFEB;">
+<div class="box ccol" style="background-color: #E8E8BF;">
 	
 <section class="table" id="showing_requesting_list_area_table">
 <a href="<%=url_for :controller => "main", :action => "showRequestingBook", :id => showing_requesting_list_area_mas%>">	
@@ -51,7 +51,7 @@ $(function() {
 				</span>				
 				<%elsif !showing_requesting_list_area_mas.course.blank?%>	
 				<span style="">
-				<%=truncate(showing_requesting_list_area_mas.course, :length => 13, :omission => '...') %>
+				<%=truncate(showing_requesting_list_area_mas.course, :length => 9, :omission => '...') %>
 				</span>
 				<%else%>
 				<span style="">

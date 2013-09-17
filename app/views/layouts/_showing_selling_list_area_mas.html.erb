@@ -1,4 +1,4 @@
-<div class="box ccol" style="background-color: #FAFAFA;">
+<div class="box ccol" style="background-color: #FEFEFE;">
 	
 <section class="table" id="showing_selling_list_area_table">
 <a href="<%=url_for :controller => "main", :action => "showSellingBook", :id => showing_selling_list_area_mas%>">	
@@ -11,7 +11,7 @@
 				</span>				
 				<%elsif !showing_selling_list_area_mas.course.blank?%>	
 				<span style="">
-				<%=truncate(showing_selling_list_area_mas.course, :length => 13, :omission => '...') %>
+				<%=truncate(showing_selling_list_area_mas.course, :length => 9, :omission => '...') %>
 				</span>
 				<%else%>
 				<span style="">

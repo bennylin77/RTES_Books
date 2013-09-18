@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   rescue_from FbGraph::Exception, :with => :fb_graph_exception
 
   def dns_name
-      'http://rtes.funeasy.tw'
+      'http://rtes.tw'
   end
 
   def fb_graph_exception(e)

@@ -3,7 +3,7 @@ module ApplicationHelper
   include Authen::HelperMethods
   
   def dns_name
-     'http://rtes.funeasy.tw'
+     'http://rtes.tw'
   end
   #for page scrolling
   def pageless(total_pages, url=nil, container=nil)

@@ -1,7 +1,8 @@
 <h3 style="display: inline-block ; margin-left: 115px;	font-weight: 900;">交易地區＞＞</h3>
 <ul>	
 	<%if !session[:user_id].blank?%>	
-		<%User.find(session[:user_id]).user_menu_lists.each do |e|%>	
+		<%User.find(session[:user_id]).user_menu_lists.each do |e|%>
+			<%if e.school_list.verified%>
 			<li><!--%=image_tag("http://graph.facebook.com/"+FbGraph::Page.search(e.school_list.english_name)[0].identifier+"/picture", :size=>"30x30")%>-->
 				<a href="/main/schoolOutline?english_name=<%=e.school_list.english_name%>">
 					<%if !e.school_list.chinese_name.blank?%>
@@ -10,7 +11,8 @@
 					<%=e.school_list.english_name%>
 					<%end%>
 				</a>
-			</li>	
+			</li>&nbsp;
+			<%end%>	
 		<%end%>
 	<%end%>	
 	<li><%=link_to "全國", "/main/allOutline"%></li>
